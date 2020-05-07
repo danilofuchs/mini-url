@@ -35,7 +35,9 @@ function App() {
         <h1>Mini URL</h1>
         <form onSubmit={handleSubmit}>
           <input
+            className="input"
             placeholder="URL"
+            type="text"
             value={inputUrl}
             onChange={handleChange}
             disabled={loading}

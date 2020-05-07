@@ -3,7 +3,7 @@
 }
 
 .App-logo {
-  height: 10rem;
+  height: 2.5em;
   pointer-events: none;
 }
 
@@ -35,4 +35,23 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.input {
+  font-size: 2em;
+  color: #dddfe2;
+  background-color: #40444b;
+
+  border: 0.125rem solid transparent;
+  border-radius: 1rem;
+
+  padding: 1rem;
+
+  outline: none;
+
+  transition: border 100ms linear;
+}
+
+.input:focus {
+  border: 0.125rem solid #dddfe2;
 }
