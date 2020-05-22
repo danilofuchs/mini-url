@@ -1,27 +1,41 @@
+html {
+  font-size: 100%;
+}
+
+.title {
+  font-size: 4rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+@media only screen and (max-device-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+}
+
 .App {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  align-items: center;
+  justify-content: center;
+  color: white;
   text-align: center;
+  padding-top: 3rem;
 }
 
 .App-logo {
-  height: 2.5em;
+  height: 5rem;
   pointer-events: none;
+  justify-self: center;
+  align-self: end;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+    animation: App-logo-spin infinite 40s linear;
   }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
 .App-link {
@@ -37,14 +51,25 @@
   }
 }
 
+.form {
+  display: grid;
+  grid-template-columns: auto 20%;
+
+  height: 4rem;
+}
+
 .input {
-  font-size: 2em;
-  font-family: "Jost", sans-serif;
+  height: 100%;
+
+  font-size: 1.5rem;
   color: #dddfe2;
   background-color: #40444b;
 
   border: 0.125rem solid transparent;
   border-radius: 1rem;
+
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 
   padding: 1rem;
 
@@ -54,5 +79,33 @@
 }
 
 .input:focus {
-  border: 0.125rem solid #dddfe2;
+  border: 0.25rem solid #629bff;
+}
+
+.button {
+  height: 100%;
+
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #00000091;
+  background-color: #dddfe2e0;
+
+  border: none;
+  border-bottom-right-radius: 1rem;
+  border-top-right-radius: 1rem;
+
+  padding: 1rem;
+
+  outline: none;
+
+  transition: border 100ms linear;
+}
+
+.button:focus {
+  border: 0.25rem solid #629bff;
+}
+
+.result {
+  font-size: 1.5rem;
+  font-style: italic;
 }

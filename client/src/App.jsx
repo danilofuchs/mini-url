@@ -22,6 +22,7 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setResultUrl(null);
     setLoading(true);
     const miniUrl = await requestMinifiedUrl(inputUrl);
     setResultUrl(miniUrl);
@@ -30,25 +31,23 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>Mini URL</h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            className="input"
-            placeholder="URL"
-            type="text"
-            value={inputUrl}
-            onChange={handleChange}
-            disabled={loading}
-          />
-          <button type="submit" disabled={loading}>
-            OK
-          </button>
-          {loading && <p>Loading...</p>}
-          {resultUrl && <a href={resultUrl}>{resultUrl}</a>}
-        </form>
-      </header>
+      <img src={logo} className="App-logo" alt="logo" />
+      <h1 className="title">Mini URL</h1>
+      <form className="form" onSubmit={handleSubmit}>
+        <input
+          className="input"
+          placeholder="URL"
+          type="text"
+          value={inputUrl}
+          onChange={handleChange}
+          disabled={loading}
+        />
+        <button className="button">OK</button>
+      </form>
+      <div className="result">
+        {loading && <p>Loading...</p>}
+        {resultUrl && <a href={resultUrl}>{resultUrl}</a>}
+      </div>
     </div>
   );
 }
