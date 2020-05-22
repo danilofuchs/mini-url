@@ -1,25 +1,18 @@
-const functions = require('firebase-functions');
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+admin.initializeApp();
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+let db = admin.firestore();
 
-/**
- * Redirects you to something nice
- *
- * @param {!express:Request} req HTTP request context.
- * @param {!express:Response} res HTTP response context.
- */
+exports.redirect = functions.https.onRequest(async (req, res) => {
+  const key = req.path.replace("/", "");
 
-const DB = {
-    "/url1": "https://google.com",
-    "/url2": "https://youtube.com"
-  };
-  
-exports.redirect = functions.https.onRequest((req, res) => {
-    res.setHeader("Location", DB[req.path] || "https://www.duolingo.com/");
-    res.status(302).send();
+  const doc = await db.collection("urls").doc(key).get();
+  const data = doc.data();
+
+  const targetUrl = data ? data.long_url : "https://www.duoling.com/";
+
+  res.setHeader("Location", targetUrl);
+  res.status(302).send();
 });
+
