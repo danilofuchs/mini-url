@@ -1,8 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-admin.initializeApp();
 
-let db = admin.firestore();
+const db = admin.firestore();
 
 exports.redirect = functions.https.onRequest(async (req, res) => {
   const key = req.path.replace("/", "");
@@ -17,4 +16,3 @@ exports.redirect = functions.https.onRequest(async (req, res) => {
   res.setHeader("Location", targetUrl);
   res.status(302).send();
 });
-
