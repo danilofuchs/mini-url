@@ -3,15 +3,12 @@ import logo from "./assets/mini-url.png";
 import "./App.css";
 
 async function requestMinifiedUrl(longUrl) {
-  const response = await fetch(
-    "https://us-central1-mini-url-2b477.cloudfunctions.net/minifyUrl",
-    {
-      method: "POST",
-      body: JSON.stringify({
-        long_url: longUrl,
-      }),
-    }
-  );
+  const response = await fetch("/minifyUrl", {
+    method: "POST",
+    body: JSON.stringify({
+      long_url: longUrl,
+    }),
+  });
   const body = await response.json();
   return body.short_url;
 }

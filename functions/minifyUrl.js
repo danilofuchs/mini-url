@@ -8,8 +8,8 @@ function generateShortHash(input) {
   return crypto.createHash("sha1").update(input).digest("hex").substring(0, 7);
 }
 
-function buildRedirectionUrl(host, hash) {
-  return `https://${host}/redirect/${hash}`;
+function buildRedirectionUrl(hash) {
+  return `https://mini-url-2b477.web.app/${hash}`;
 }
 
 exports.minifyUrl = functions.https.onRequest(async (req, res) => {
@@ -19,7 +19,7 @@ exports.minifyUrl = functions.https.onRequest(async (req, res) => {
   console.log("Received url", longUrl);
 
   const shortHash = generateShortHash(longUrl);
-  const shortUrl = buildRedirectionUrl(req.header("host"), shortHash);
+  const shortUrl = buildRedirectionUrl(shortHash);
 
   console.log("Generated url", shortUrl);
 
