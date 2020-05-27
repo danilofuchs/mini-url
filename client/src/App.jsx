@@ -3,11 +3,17 @@ import logo from "./assets/mini-url.png";
 import "./App.css";
 
 async function requestMinifiedUrl(longUrl) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("https://bit.ly/2zlZIib");
-    }, 3000);
-  });
+  const response = await fetch(
+    "https://us-central1-mini-url-2b477.cloudfunctions.net/minifyUrl",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        long_url: longUrl,
+      }),
+    }
+  );
+  const body = await response.json();
+  return body.short_url;
 }
 
 function App() {
@@ -46,7 +52,11 @@ function App() {
       </form>
       <div className="result">
         {loading && <p>Loading...</p>}
-        {resultUrl && <a href={resultUrl}>{resultUrl}</a>}
+        {resultUrl && (
+          <a target="_blank" rel="noopener noreferrer" href={resultUrl}>
+            {resultUrl}
+          </a>
+        )}
       </div>
     </div>
   );
