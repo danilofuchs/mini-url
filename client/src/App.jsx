@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import logo from "./assets/mini-url.png";
 import "./App.css";
+import validUrl from "valid-url";
 
 async function requestMinifiedUrl(longUrl) {
-  const response = await fetch("/minifyUrl", {
+  const response = await fetch(process.env.REACT_APP_BASE_URL + "/minifyUrl", {
     method: "POST",
     body: JSON.stringify({
       long_url: longUrl,
@@ -13,10 +14,15 @@ async function requestMinifiedUrl(longUrl) {
   return body.short_url;
 }
 
+function validateUrl(inputUrl) {
+  return validUrl.isWebUri(inputUrl);
+}
+
 function App() {
   const [inputUrl, setInputUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [resultUrl, setResultUrl] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     setInputUrl(e.target.value);
@@ -25,8 +31,14 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
     setResultUrl(null);
     setLoading(true);
+    if (!validateUrl(inputUrl)) {
+      setLoading(false);
+      setError("Please provide a valid URL");
+      return;
+    }
     const miniUrl = await requestMinifiedUrl(inputUrl);
     setResultUrl(miniUrl);
     setLoading(false);
@@ -54,6 +66,7 @@ function App() {
             {resultUrl}
           </a>
         )}
+        {error && <p>{error}</p>}
       </div>
     </div>
   );
