@@ -16,6 +16,13 @@ exports.minifyUrl = functions.https.onRequest(async (req, res) => {
   const body = JSON.parse(req.body);
   const longUrl = body.long_url;
 
+  if (!validateUrl(longUrl)) {
+    return res.status(400).send({
+      code: "ERROR_INVALID_URL",
+      message: "The provided URL is invalid",
+    });
+  }
+
   console.log("Received url", longUrl);
 
   const shortHash = generateShortHash(longUrl);
@@ -33,5 +40,11 @@ exports.minifyUrl = functions.https.onRequest(async (req, res) => {
 
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST");
-  res.status(200).send(data);
+  return res.status(200).send(data);
 });
+
+function validateUrl(inputUrl) {
+  return /^[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
+    inputUrl
+  );
+}
