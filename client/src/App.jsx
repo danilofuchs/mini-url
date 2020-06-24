@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import logo from "./assets/mini-url.png";
 import "./App.css";
-import validUrl from "valid-url";
 
 async function requestMinifiedUrl(longUrl) {
   const response = await fetch(process.env.REACT_APP_BASE_URL + "/minifyUrl", {
@@ -9,6 +8,9 @@ async function requestMinifiedUrl(longUrl) {
     body: JSON.stringify({
       long_url: longUrl,
     }),
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
   });
   const body = await response.json();
 
@@ -20,7 +22,9 @@ async function requestMinifiedUrl(longUrl) {
 }
 
 function validateUrl(inputUrl) {
-  validUrl.isWebUri(inputUrl);
+  return /^[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
+    inputUrl
+  );
 }
 
 const errorMessageMap = {
