@@ -4,6 +4,22 @@ const crypto = require("crypto");
 
 const db = admin.firestore();
 
+function validateUrl(inputUrl) {
+  return /^[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
+    inputUrl
+  );
+}
+
+/**
+ * @param {String} inputUrl
+ */
+function addHttpsIfAbsent(inputUrl) {
+  if (inputUrl.includes("://")) {
+    return inputUrl;
+  }
+  return `https://${inputUrl}`;
+}
+
 function generateShortHash(input) {
   return crypto.createHash("sha1").update(input).digest("hex").substring(0, 7);
 }
@@ -17,7 +33,6 @@ exports.minifyUrl = functions.https.onRequest(async (req, res) => {
   res.setHeader("Access-Control-Allow-Methods", "POST");
 
   try {
-    const body = JSON.parse(req.body);
     const longUrl = body.long_url;
 
     if (!validateUrl(longUrl)) {
@@ -28,8 +43,9 @@ exports.minifyUrl = functions.https.onRequest(async (req, res) => {
     }
 
     console.log("Received url", longUrl);
-
-    const shortHash = generateShortHash(longUrl);
+    const fixedUrl = addHttpsIfAbsent(longUrl);
+    console.log("Fixed url to", fixedUrl);
+    const shortHash = generateShortHash(fixedUrl);
     const shortUrl = buildRedirectionUrl(shortHash);
 
     console.log("Generated url", shortUrl);
@@ -50,9 +66,3 @@ exports.minifyUrl = functions.https.onRequest(async (req, res) => {
     });
   }
 });
-
-function validateUrl(inputUrl) {
-  return /^[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
-    inputUrl
-  );
-}
