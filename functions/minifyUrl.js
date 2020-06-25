@@ -13,34 +13,42 @@ function buildRedirectionUrl(hash) {
 }
 
 exports.minifyUrl = functions.https.onRequest(async (req, res) => {
-  const body = JSON.parse(req.body);
-  const longUrl = body.long_url;
-
-  if (!validateUrl(longUrl)) {
-    return res.status(400).send({
-      code: "ERROR_INVALID_URL",
-      message: "The provided URL is invalid",
-    });
-  }
-
-  console.log("Received url", longUrl);
-
-  const shortHash = generateShortHash(longUrl);
-  const shortUrl = buildRedirectionUrl(shortHash);
-
-  console.log("Generated url", shortUrl);
-
-  const data = {
-    hash: shortHash,
-    long_url: longUrl,
-    short_url: shortUrl,
-  };
-
-  await db.collection("urls").doc(shortHash).set(data);
-
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST");
-  return res.status(200).send(data);
+
+  try {
+    const body = JSON.parse(req.body);
+    const longUrl = body.long_url;
+
+    if (!validateUrl(longUrl)) {
+      return res.status(400).send({
+        code: "ERROR_INVALID_URL",
+        message: "The provided URL is invalid",
+      });
+    }
+
+    console.log("Received url", longUrl);
+
+    const shortHash = generateShortHash(longUrl);
+    const shortUrl = buildRedirectionUrl(shortHash);
+
+    console.log("Generated url", shortUrl);
+
+    const data = {
+      hash: shortHash,
+      long_url: longUrl,
+      short_url: shortUrl,
+    };
+
+    await db.collection("urls").doc(shortHash).set(data);
+
+    return res.status(200).send(data);
+  } catch (e) {
+    return res.status(500).send({
+      code: "ERROR_UNKNOWN",
+      message: "Unknown server error",
+    });
+  }
 });
 
 function validateUrl(inputUrl) {

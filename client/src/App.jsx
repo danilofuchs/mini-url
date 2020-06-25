@@ -11,12 +11,22 @@ async function requestMinifiedUrl(longUrl) {
     }),
   });
   const body = await response.json();
+
+  if (!response.ok) {
+    throw body;
+  }
+
   return body.short_url;
 }
 
 function validateUrl(inputUrl) {
-  return validUrl.isWebUri(inputUrl);
+  validUrl.isWebUri(inputUrl);
 }
+
+const errorMessageMap = {
+  ERROR_INVALID_URL: "Please provide a valid URL",
+  ERROR_UNKNOWN: "Unknown server error",
+};
 
 function App() {
   const [inputUrl, setInputUrl] = useState("");
@@ -34,14 +44,24 @@ function App() {
     setError(null);
     setResultUrl(null);
     setLoading(true);
+
     if (!validateUrl(inputUrl)) {
-      setLoading(false);
-      setError("Please provide a valid URL");
+      handleError("ERROR_INVALID_URL");
       return;
     }
-    const miniUrl = await requestMinifiedUrl(inputUrl);
-    setResultUrl(miniUrl);
+
+    try {
+      const miniUrl = await requestMinifiedUrl(inputUrl);
+      setResultUrl(miniUrl);
+      setLoading(false);
+    } catch (e) {
+      handleError(e.code || "ERROR_UNKNOWN");
+    }
+  };
+
+  const handleError = (code) => {
     setLoading(false);
+    setError(errorMessageMap[code] || errorMessageMap["ERROR_UNKNOWN"]);
   };
 
   return (
