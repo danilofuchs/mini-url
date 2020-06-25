@@ -65,7 +65,7 @@ html {
   color: #dddfe2;
   background-color: #40444b;
 
-  border: 0.125rem solid transparent;
+  border: 0.25rem solid transparent;
   border-radius: 1rem;
 
   border-top-right-radius: 0;
@@ -90,7 +90,7 @@ html {
   color: #00000091;
   background-color: #dddfe2e0;
 
-  border: none;
+  border: 0.25rem solid transparent;
   border-bottom-right-radius: 1rem;
   border-top-right-radius: 1rem;
 
@@ -99,6 +99,8 @@ html {
   outline: none;
 
   transition: border 100ms linear;
+
+  cursor: pointer;
 }
 
 .button:focus {
