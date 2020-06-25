@@ -31,9 +31,18 @@ function buildRedirectionUrl(hash) {
 exports.minifyUrl = functions.https.onRequest(async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Allow", "POST");
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+  if (req.method !== "POST") {
+    return res.status(405).send();
+  }
 
   try {
-    const longUrl = body.long_url;
+    const longUrl = req.body.long_url;
 
     if (!validateUrl(longUrl)) {
       return res.status(400).send({
@@ -52,7 +61,7 @@ exports.minifyUrl = functions.https.onRequest(async (req, res) => {
 
     const data = {
       hash: shortHash,
-      long_url: longUrl,
+      long_url: fixedUrl,
       short_url: shortUrl,
     };
 
@@ -60,6 +69,7 @@ exports.minifyUrl = functions.https.onRequest(async (req, res) => {
 
     return res.status(200).send(data);
   } catch (e) {
+    console.error(e);
     return res.status(500).send({
       code: "ERROR_UNKNOWN",
       message: "Unknown server error",
