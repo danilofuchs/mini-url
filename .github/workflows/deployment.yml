@@ -1,4 +1,4 @@
-name: Build and Deploy - Client app
+name: Build and Deploy
 on:
   push:
     branches:
@@ -46,6 +46,22 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@master
 
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        working-directory: ./functions
+        run: yarn install --ignore-engines
+
       - name: Download Artifact
         uses: actions/download-artifact@master
         with:
@@ -53,8 +69,9 @@ jobs:
           path: ./client/build
 
       - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only hosting
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          npm config set prefix "$HOME"
+          npm install -g firebase-tools
+          $HOME/bin/firebase deploy --token "$FIREBASE_TOKEN"
