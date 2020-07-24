@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import logo from "./assets/mini-url.png";
 import "./App.css";
+import { useRef } from "react";
 
 async function requestMinifiedUrl(longUrl) {
   const response = await fetch(process.env.REACT_APP_BASE_URL + "/minifyUrl", {
@@ -22,9 +23,10 @@ async function requestMinifiedUrl(longUrl) {
 }
 
 function validateUrl(inputUrl) {
-  return /^[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(
-    inputUrl
-  );
+  return /^[(http(s)?)://(www.)?a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/
+    .test(
+      inputUrl,
+    );
 }
 
 const errorMessageMap = {
@@ -37,6 +39,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [resultUrl, setResultUrl] = useState(null);
   const [error, setError] = useState(null);
+  const buttonRef = useRef();
 
   const handleChange = (e) => {
     setInputUrl(e.target.value);
@@ -45,6 +48,8 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    buttonRef.current.focus();
+
     setError(null);
     setResultUrl(null);
     setLoading(true);
@@ -68,6 +73,19 @@ function App() {
     setError(errorMessageMap[code] || errorMessageMap["ERROR_UNKNOWN"]);
   };
 
+  const resultClassName = ("result " + (() => {
+    if (loading) {
+      return "result-loading";
+    }
+    if (resultUrl) {
+      return "result-success";
+    }
+    if (error) {
+      return "result-error";
+    }
+    return "";
+  })());
+
   return (
     <div className="App">
       <img src={logo} className="App-logo" alt="logo" />
@@ -81,12 +99,18 @@ function App() {
           onChange={handleChange}
           disabled={loading}
         />
-        <button className="button">OK</button>
+        <button ref={buttonRef} className="button">OK</button>
       </form>
-      <div className="result">
+      <div
+        className={resultClassName}
+      >
         {loading && <p>Loading...</p>}
         {resultUrl && (
-          <a target="_blank" rel="noopener noreferrer" href={resultUrl}>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={resultUrl}
+          >
             {resultUrl}
           </a>
         )}
